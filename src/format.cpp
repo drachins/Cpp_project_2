@@ -26,6 +26,6 @@ string Format::ElapsedTime(long seconds) {
     seconds -= minutes*60;
 
 
-    return to_string(hours) + ":" + to_string(minutes) + ":" + to_string(seconds);
+    return to_string(long(hours)) + ":" + to_string(int(minutes)) + ":" + to_string(int(seconds));
     
     }
