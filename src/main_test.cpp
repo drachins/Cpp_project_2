@@ -16,6 +16,19 @@ const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 
+enum CPUStates {
+  kUser_ = 1,
+  kNice_ = 2,
+  kSystem_ = 3,
+  kIdle_ = 4,
+  kIOwait_ = 5,
+  kIRQ_ = 6,
+  kSoftIRQ_ = 7,
+  kSteal_ = 8,
+  kGuest_ = 9,
+  kGuestNice_ = 10
+};
+
 using std::string;
 using std::stof;
 using std::string;
@@ -151,8 +164,85 @@ long IdleJiffies() {
   return idle_jiffies_sys; 
 }
 
+vector<string> CpuUtilization() { 
+  string line, value;
+  vector<string> cpu_jiffies;
+
+  std::ifstream stream(kProcDirectory+kStatFilename);
+  if(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+
+    for(int i = 0; i < CPUStates::kGuestNice_; i++){
+      linestream >> value;
+      if(i >= CPUStates::kUser_){
+        cpu_jiffies.push_back(value);
+      }
+    }
+  }
+
+  return cpu_jiffies; 
+  }
+
+int TotalProcesses() { 
+  string key, value, line;
+  int processes;
+
+  std::ifstream stream(kProcDirectory+kStatFilename);
+  while(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+
+    linestream >> key >> value;
+    if(key == "processes"){
+      string::size_type sz;
+      processes = stoi(value, &sz);
+      break;
+    }
+  }
+  return processes;
+  }
+
+int RunningProcesses() { 
+  string key, value, line;
+  int processes_running;
+
+  std::ifstream stream(kProcDirectory+kStatFilename);
+  while(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+
+    linestream >> key >> value;
+    if(key == "procs_running"){
+      string::size_type sz;
+      processes_running = stoi(value, &sz);
+      break;
+    }
+  }
+  return processes_running;
+  }
+
+string Command(int pid) { 
+  string line, command;
+
+  std::ifstream stream(kProcDirectory + "/" + to_string(pid) + kCmdlineFilename);
+  if(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> command;
+  }
+  
+  return command; 
+}
+
 
 int main(){
     
-    std::cout << IdleJiffies() << "\n";
+  /*vector<string> cpu_util{CpuUtilization()};
+
+  for(int i = 0 ; i < cpu_util.size() ;i++){
+    std::cout << cpu_util[i] << "\n";
+  }*/
+
+  std::cout << Command(1653) << "\n";
 }
