@@ -235,6 +235,44 @@ string Command(int pid) {
   return command; 
 }
 
+string Ram(int pid) { 
+  string line, key, ram;
+
+  std::ifstream stream(kProcDirectory+"/"+to_string(pid)+kStatusFilename);
+  while(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+
+    linestream >> key >> ram;
+    if(key == "VmSize:"){
+      break;
+    }
+  }
+
+  return ram; 
+  }
+
+string Uid(int pid) { 
+  string line, key, uid;
+
+  std::ifstream stream(kProcDirectory + "/" + to_string(pid) + kCmdlineFilename);
+  if(stream.is_open()){
+    while(std::getline(stream, line)){
+      std::replace(line.begin(), line.end()," ","_");
+      std::istringstream linestream(line);
+      linestream >> key >> uid;
+      if(key == "Uid:"){
+        std::replace(uid.begin(), uid.end(), "_", " ");
+        break;
+      }
+
+    }
+
+  }
+
+  return uid; 
+}
+
 
 int main(){
     
@@ -244,5 +282,5 @@ int main(){
     std::cout << cpu_util[i] << "\n";
   }*/
 
-  std::cout << Command(1653) << "\n";
+  std::cout << Uid(1032) << "\n";
 }
