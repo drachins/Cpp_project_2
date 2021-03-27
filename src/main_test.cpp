@@ -104,8 +104,55 @@ long ActiveJiffies(int pid) {
   return active_jiffs; 
 }
 
+long ActiveJiffies() { 
+  string line, value;
+  long active_jiffies_sys;
+  int utime = 1;
+  int idle = 4;
+  int iowait = 5;
+  int guest_nice = 10;
+
+  std::ifstream stream(kProcDirectory+kStatFilename);
+  if(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    string::size_type sz;
+    for(int i = 0; i < guest_nice; i++){
+      linestream >> value;
+      if((i >= utime && i < idle) || i > iowait){
+        active_jiffies_sys += stol(value, &sz);
+      }
+    }
+  }
+
+  return active_jiffies_sys; 
+  }
+
+long IdleJiffies() { 
+  string line, value;
+  long idle_jiffies_sys;
+  int idle = 4;
+  int iowait = 5;
+  
+
+  std::ifstream stream(kProcDirectory+kStatFilename);
+  if(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    string::size_type sz;
+    for(int i = 0; i <= iowait; i++){
+      linestream >> value;
+      if(i == idle || i == iowait){
+        idle_jiffies_sys += stol(value, &sz);
+      }
+    }
+  }
+
+  return idle_jiffies_sys; 
+}
+
 
 int main(){
     
-    std::cout << ActiveJiffies(1629) << "\n";
+    std::cout << IdleJiffies() << "\n";
 }
