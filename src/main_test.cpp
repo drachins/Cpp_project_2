@@ -340,6 +340,42 @@ long UpTime(int pid) {
   return UpTime() - (long)pid_time; 
   }
 
+float Utilization() { 
+
+    float prev_idle = 0;
+    float idle = 0;
+    float prev_active = 0;
+    float active = 0;
+    float prev_total = 0;
+    float total = 0;
+
+    vector<string> old_jiffs = CpuUtilization();
+    sleep(1);
+    vector<string> new_jiffs = CpuUtilization();
+
+    for(int i = 1; i < CPUStates::kSteal_; i++){
+        if(i == CPUStates::kIdle_ || i == CPUStates::kIOwait_){
+            prev_idle += stof(old_jiffs[i-1]);
+            idle += stof(new_jiffs[i-1]);
+        }
+        else{
+            prev_active += stof(old_jiffs[i-1]);
+            active += stof(new_jiffs[i-1]);
+        }
+    }
+
+    
+    prev_total = prev_active + prev_idle;
+    total = active + idle;
+
+    float total_diff = total - prev_total;
+    float idle_diff = idle - prev_idle; 
+    std::cout << active << " " << prev_active << " " << idle << " " << prev_idle << "\n";
+    std::cout << total_diff << " " << idle_diff << "\n";
+
+    return 100 * (total_diff - idle_diff)/total_diff; 
+}
+
 int main(){
     
   /*vector<string> cpu_util{CpuUtilization()};
@@ -348,5 +384,5 @@ int main(){
     std::cout << cpu_util[i] << "\n";
   }*/
 
-  std::cout << UpTime(1092) << "\n";
+  std::cout << Utilization() << "\n";
 }
