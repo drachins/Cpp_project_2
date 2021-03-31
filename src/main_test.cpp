@@ -1,5 +1,7 @@
 
 #include <iostream>
+#include <regex>
+#include <unistd.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -255,24 +257,88 @@ string Ram(int pid) {
 string Uid(int pid) { 
   string line, key, uid;
 
-  std::ifstream stream(kProcDirectory + "/" + to_string(pid) + kCmdlineFilename);
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if(stream.is_open()){
     while(std::getline(stream, line)){
-      std::replace(line.begin(), line.end()," ","_");
       std::istringstream linestream(line);
       linestream >> key >> uid;
       if(key == "Uid:"){
-        std::replace(uid.begin(), uid.end(), "_", " ");
         break;
+        }
       }
 
     }
 
-  }
+  
 
   return uid; 
 }
 
+string User(int pid) { 
+  string line, user, x, uid;
+
+  std::ifstream stream(kPasswordPath);
+  if(stream.is_open()){
+    while(std::getline(stream, line)){
+      std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
+      linestream >> user >> x >> uid;
+      if(Uid(pid) == uid){
+        break;
+      }
+    }
+  }
+
+  return user; 
+
+}
+
+string OperatingSystem() {
+  string line;
+  string key;
+  string value;
+  std::ifstream filestream(kOSPath);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ' ', '_');
+      std::replace(line.begin(), line.end(), '=', ' ');
+      std::replace(line.begin(), line.end(), '"', ' ');
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == "PRETTY_NAME") {
+          std::replace(value.begin(), value.end(), '_', ' ');
+          return value;
+        }
+      }
+    }
+  }
+  return value;
+}
+
+long UpTime(int pid) { 
+
+  string line, value;
+  float pid_time;
+  const float cpu_freq = 2.3e9; 
+  const int stat_indice = 22;
+
+  std::ifstream stream(kProcDirectory+to_string(pid)+kStatFilename);
+  if(stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    int i = 1;
+    string::size_type sz;
+    while(linestream >> value){
+      if(i == stat_indice){
+        pid_time = stof(value)/cpu_freq;
+        break;
+      }
+      i++;
+    }
+  }
+
+  return UpTime() - (long)pid_time; 
+  }
 
 int main(){
     
@@ -282,5 +348,5 @@ int main(){
     std::cout << cpu_util[i] << "\n";
   }*/
 
-  std::cout << Uid(1032) << "\n";
+  std::cout << UpTime(1092) << "\n";
 }
