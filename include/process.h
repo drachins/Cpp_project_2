@@ -19,7 +19,8 @@ class Process {
   // TODO: Declare any necessary private members
  private:
    int process_id;
-   long oldcpu_util;
+   long old_jiffies;
+   float currcpu_util;
 };
 
 #endif
