@@ -6,6 +6,7 @@
 
 #include "linux_parser.h"
 
+
 using std::stof;
 using std::string;
 using std::to_string;
@@ -135,15 +136,14 @@ long LinuxParser::Jiffies() {
 long LinuxParser::ActiveJiffies(int pid) { 
   string line, value;
   long active_jiffs;
-  const int cmajflt = 13, priority = 18;
 
   std::ifstream stream(kProcDirectory+"/"+to_string(pid)+kStatFilename);
   if(stream.is_open()){
     std::getline(stream, line);
     std::istringstream linestream(line);
-    for(int i = 0; i < 52; i++){
+    for(int i = 0; i < ProcessStates::kCSTime_; i++){
       linestream >> value;
-      if(i > cmajflt && i < priority){
+      if(i > ProcessStates::kMajFault_){
         string::size_type sz;
         active_jiffs += stol(value, &sz);
       }
@@ -338,8 +338,6 @@ long LinuxParser::UpTime(int pid) {
 
   string line, value;
   float pid_time;
-  const float cpu_freq = 2.3e9; 
-  const int stat_indice = 22;
 
   std::ifstream stream(kProcDirectory+to_string(pid)+kStatFilename);
   if(stream.is_open()){
@@ -348,9 +346,8 @@ long LinuxParser::UpTime(int pid) {
     int i = 1;
     string::size_type sz;
     while(linestream >> value){
-      if(i == stat_indice){
-        pid_time = stof(value)/cpu_freq;
-        break;
+      if(i == ProcessStates::kStartTime_){
+        pid_time = stof(value)/sysconf(_SC_CLK_TCK);
       }
       i++;
     }
