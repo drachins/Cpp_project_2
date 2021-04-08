@@ -13,35 +13,38 @@ using std::stof;
 
 
 // TODO: Return the aggregate CPU utilization
-float Processor::Utilization() { 
-
-    float prev_idle = 0;
-    float idle = 0;
-    float prev_active = 0;
-    float active = 0;
-    float prev_total = 0;
-    float total = 0;
-
-    vector<string> old_jiffs = CpuUtilization();
-    sleep(1);
-    vector<string> new_jiffs = CpuUtilization();
+vector<float> Processor::CpuUtilParser(){
+    float active_jiffs;
+    float idle_jiffs;
+    std::vector<string> jiffs = CpuUtilization();
 
     for(int i = 0; i < CPUStates::kSteal_; i++){
         if(i == CPUStates::kIdle_ || i == CPUStates::kIOwait_){
-            prev_idle += stof(old_jiffs[i]);
-            idle += stof(new_jiffs[i]);
+            idle_jiffs+= stof(jiffs[i]);
         }
         else{
-            prev_active += stof(old_jiffs[i]);
-            active += stof(new_jiffs[i]);
+            active_jiffs += stof(jiffs[i]);
         }
     }
 
-    prev_total = prev_active + prev_idle;
-    total = active + idle;
+    return vector<float> {active_jiffs, idle_jiffs};
+}
+
+float Processor::Utilization() { 
+
+    float prev_total;
+    float total;
+
+    vector<float> new_jiffs = CpuUtilParser();
+
+    prev_total = this->oldcpu_active + this->oldcpu_idle;
+    total = new_jiffs[0] + new_jiffs[1];
 
     float total_diff = total - prev_total;
-    float idle_diff = idle - prev_idle; 
+    float idle_diff = new_jiffs[0] - this->oldcpu_idle;
+
+    this->oldcpu_active = new_jiffs[0];
+    this->oldcpu_idle = new_jiffs[1]; 
 
     return (total_diff - idle_diff)/total_diff; 
 }
