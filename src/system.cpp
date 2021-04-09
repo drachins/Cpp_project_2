@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
 #include "system.h"
@@ -14,7 +15,22 @@ using std::string;
 using std::vector;
 
 // TODO: Return the system's CPU
-Processor& System::Cpu() { return cpu_; }
+
+System::System(){
+
+}
+
+void System::CpuJiffiesInit(){
+    vector<float> init_jiffies = LinuxParser::CpuUtilParser();
+    this->oldcpu_active = init_jiffies[0];
+    this->oldcpu_idle = init_jiffies[1];
+}
+
+Processor& System::Cpu() { 
+
+    return cpu_;  
+
+}
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() { return processes_; }
