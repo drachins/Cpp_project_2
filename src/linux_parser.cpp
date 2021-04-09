@@ -257,6 +257,23 @@ int LinuxParser::RunningProcesses() {
   return processes_running;
   }
 
+vector<float> LinuxParser::CpuUtilParser(){
+    float active_jiffs;
+    float idle_jiffs;
+    std::vector<string> jiffs = CpuUtilization();
+
+    for(int i = 0; i < CPUStates::kSteal_; i++){
+        if(i == CPUStates::kIdle_ || i == CPUStates::kIOwait_){
+            idle_jiffs+= stof(jiffs[i]);
+        }
+        else{
+            active_jiffs += stof(jiffs[i]);
+        }
+    }
+
+    return vector<float> {active_jiffs, idle_jiffs};
+}
+
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) { 
