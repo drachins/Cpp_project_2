@@ -3,11 +3,12 @@
 
 #include <vector>
 
-class Processor {
+#include "system.h"
+
+class Processor : public System {
  public:
 
   float Utilization();  // TODO: See src/processor.cpp
-  std::vector<float> CpuUtilParser();
   // TODO: Declare any necessary private members
  private:
 

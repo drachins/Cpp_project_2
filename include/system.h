@@ -18,15 +18,16 @@ class System {
   std::string Kernel();               // TODO: See src/system.cpp
   std::string OperatingSystem();      // TODO: See src/system.cpp
 
-  // TODO: Define any necessary private members
- private:
-  Processor cpu_ = {};
-  std::vector<Process> processes_ = {};
   int process_id;
   long old_jiffies;
   float currcpu_util;
   float oldcpu_active;
   float oldcpu_idle;
+  
+ private:
+  Processor cpu_ = {};
+  std::vector<Process> processes_ = {};
+
 };
 
 #endif
