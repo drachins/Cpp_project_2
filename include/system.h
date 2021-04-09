@@ -22,6 +22,11 @@ class System {
  private:
   Processor cpu_ = {};
   std::vector<Process> processes_ = {};
+  int process_id;
+  long old_jiffies;
+  float currcpu_util;
+  float oldcpu_active;
+  float oldcpu_idle;
 };
 
 #endif
