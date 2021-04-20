@@ -9,7 +9,7 @@
 Basic class for Process representation
 It contains relevant attributes as shown below
 */
-class Process : public System {
+class Process {
  public:
   int Pid();                               // TODO: See src/process.cpp
   std::string User();                      // TODO: See src/process.cpp
@@ -21,6 +21,9 @@ class Process : public System {
 
   // TODO: Declare any necessary private members
  private:
+  int process_id;
+  long old_jiffies;
+  float currcpu_util;
 };
 
 #endif
