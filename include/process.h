@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "system.h"
 
 /*
 Basic class for Process representation
@@ -18,10 +17,12 @@ class Process {
   std::string Ram();                       // TODO: See src/process.cpp
   long int UpTime();                       // TODO: See src/process.cpp
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
+  
+  int process_id;
 
   // TODO: Declare any necessary private members
  private:
-  int process_id;
+
   long old_jiffies;
   float currcpu_util;
 };

@@ -361,7 +361,6 @@ long LinuxParser::UpTime(int pid) {
     std::getline(stream, line);
     std::istringstream linestream(line);
     int i = 1;
-    string::size_type sz;
     while(linestream >> value){
       if(i == ProcessStates::kStartTime_){
         pid_time = stof(value)/sysconf(_SC_CLK_TCK);
