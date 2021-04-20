@@ -20,11 +20,6 @@ class System {
   std::string OperatingSystem();      // TODO: See src/system.cpp
   void CpuJiffiesInit();
 
-  int process_id;
-  long old_jiffies;
-  float currcpu_util;
-  float oldcpu_active;
-  float oldcpu_idle;
 
  private:
   Processor cpu_ = {};
