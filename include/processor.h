@@ -10,8 +10,8 @@ class Processor {
   float Utilization();  // TODO: See src/processor.cpp
   // TODO: Declare any necessary private members
  private:
-  float oldcpu_active;
-  float oldcpu_idle;
+  float oldcpu_active = 0;
+  float oldcpu_idle = 0;
 
 };
 

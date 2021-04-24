@@ -10,6 +10,7 @@ It contains relevant attributes as shown below
 */
 class Process {
  public:
+  void Pid(int);
   int Pid();                               // TODO: See src/process.cpp
   std::string User();                      // TODO: See src/process.cpp
   std::string Command();                   // TODO: See src/process.cpp
@@ -18,13 +19,12 @@ class Process {
   long int UpTime();                       // TODO: See src/process.cpp
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
   
-  int process_id;
+
 
   // TODO: Declare any necessary private members
  private:
-
-  long old_jiffies;
-  float currcpu_util;
+  int process_id;
+  float currcpu_util{0};
 };
 
 #endif
