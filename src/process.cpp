@@ -52,4 +52,4 @@ string Process::User() { return LinuxParser::User(this->process_id);}
 long int Process::UpTime() { return LinuxParser::UpTime(this->process_id);}
 
 
-bool Process::operator<(Process const& a) const {return this->currcpu_util > a.currcpu_util;}
+bool Process::operator<(Process const& a) const {return this->currcpu_util < a.currcpu_util;}
