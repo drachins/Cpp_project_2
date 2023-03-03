@@ -30,7 +30,9 @@ vector<Process>& System::Processes() {
     for(int i : pids){
         Process pid;
         pid.Pid(i);
-        this->processes_.push_back(pid);
+        if(pid.Ram() != "0"){
+            this->processes_.push_back(pid);
+        }
 
     }
 

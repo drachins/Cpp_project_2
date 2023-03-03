@@ -296,11 +296,15 @@ string LinuxParser::Ram(int pid) {
 
     linestream >> key >> ram;
     if(key == "VmSize:"){
-      break;
+      return ram;
+    }
+    if(stream.eof()){
+      ram = "0";
+      return ram;
     }
   }
 
-  return ram; 
+  return "";
   }
 
 string LinuxParser::Uid(int pid) { 
@@ -312,13 +316,13 @@ string LinuxParser::Uid(int pid) {
       std::istringstream linestream(line);
       linestream >> key >> uid;
       if(key == "Uid:"){
-        break;
+        return uid;
         }
       }
 
     }
 
-  return uid; 
+  return ""; 
 }
 
 string LinuxParser::User(int pid) { 
@@ -335,7 +339,7 @@ string LinuxParser::User(int pid) {
       }
     }
   }
-
+  user.resize(4);
   return user; 
 
 }
